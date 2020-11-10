@@ -54,11 +54,12 @@ app.post("/logout", (req, res) => {
   // TODO log user out of the application
   // redirect to the login page
   console.log(colors.cyan("Log out!"));
-  res.redirect("/");
+  res.cookie("message", "You have successfully logged out!").redirect("/");
 });
 
 app.get("/register", (req, res) => {
-  res.render("register.njk", null);
+  const message = req.cookies.message;
+  res.render("register.njk", { message });
 });
 
 app.post("/register", async (req, res) => {
@@ -70,10 +71,10 @@ app.post("/register", async (req, res) => {
     const user = await users.create({ username, password });
     console.log(user);
     // redirect to the login page
-    res.redirect("/");
+    res.cookie("message", "You have successfully registered!").redirect("/");
   } catch (err) {
     console.log(err);
-    res.json(err);
+    res.cookie("message", "Invalid username or password!").redirect("/register");
   }
 });
 
