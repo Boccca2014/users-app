@@ -1,3 +1,4 @@
+const cookieParser = require("cookie-parser");
 const users = require("./model/User.js");
 const db = require("./data/db.js");
 const morgan = require("morgan");
@@ -16,6 +17,7 @@ nunjucks.configure("views", {
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("assets"));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   // TODO if user is already logged in, redirect to dashboard
