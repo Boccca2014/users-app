@@ -1,9 +1,12 @@
+const db = require("./data/db.js");
 const morgan = require("morgan");
 const colors = require("colors");
 const nunjucks = require("nunjucks");
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 5001;
+
+db.connect();
 
 nunjucks.configure("views", {
   express: app,
