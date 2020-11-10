@@ -1,3 +1,4 @@
+const users = require("./model/User.js");
 const db = require("./data/db.js");
 const morgan = require("morgan");
 const colors = require("colors");
@@ -48,14 +49,20 @@ app.get("/register", (req, res) => {
   res.render("register.njk", null);
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   console.log(colors.cyan("Register:", { username, password }));
-  // TODO register the user!
-
-  // redirect to the login page
-  res.redirect("/");
+  try {
+    // TODO register the user!
+    const user = await users.create({username, password});
+    console.log(user);
+    // redirect to the login page
+    res.redirect("/");
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
 });
 
 app.listen(port, () =>
