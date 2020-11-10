@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   // TODO if user is already logged in, redirect to dashboard
   // otherwsie render the login form
-  const message = req.query.message;
+  const message = req.cookies.message;
   res.render("index.njk", { message });
 });
 
@@ -41,7 +41,7 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     console.log(err);
     // redirect to homepage
-    res.redirect("/?message=Incorrect username or password");
+    res.cookie("message", "Incorrect username or password").redirect("/");
   }
 });
 
