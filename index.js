@@ -20,7 +20,8 @@ app.use(express.static("assets"));
 app.get("/", (req, res) => {
   // TODO if user is already logged in, redirect to dashboard
   // otherwsie render the login form
-  res.render("index.njk", { message: "This is a message!" });
+  const message = req.query.message;
+  res.render("index.njk", { message });
 });
 
 app.post("/login", async (req, res) => {
@@ -38,7 +39,7 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     console.log(err);
     // redirect to homepage
-    res.redirect("/");
+    res.redirect("/?message=Incorrect username or password");
   }
 });
 
