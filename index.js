@@ -23,14 +23,23 @@ app.get("/", (req, res) => {
   res.render("index.njk", null);
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   console.log(colors.cyan("Login using", { username, password }));
-  // TODO check credential
-  // if credential ok then redirect to dashboard
-  res.redirect(`/dashboard?username=${username}`);
-  // otherwise redirect to login page (homepage)
+
+  try {
+    // check credential
+    const user = await users.findOne({ username, password });
+    if (!user) throw Error("No user found with this username!");
+    console.log(user);
+    // redirect to dashboard
+    res.redirect(`/dashboard?username=${user.username}`);
+  } catch (err) {
+    console.log(err);
+    // redirect to homepage
+    res.redirect("/");
+  }
 });
 
 app.get("/dashboard", (req, res) => {
