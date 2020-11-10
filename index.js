@@ -20,7 +20,7 @@ app.use(express.static("assets"));
 app.get("/", (req, res) => {
   // TODO if user is already logged in, redirect to dashboard
   // otherwsie render the login form
-  res.render("index.njk", null);
+  res.render("index.njk", { message: "This is a message!" });
 });
 
 app.post("/login", async (req, res) => {
@@ -64,7 +64,7 @@ app.post("/register", async (req, res) => {
   console.log(colors.cyan("Register:", { username, password }));
   try {
     // TODO register the user!
-    const user = await users.create({username, password});
+    const user = await users.create({ username, password });
     console.log(user);
     // redirect to the login page
     res.redirect("/");
