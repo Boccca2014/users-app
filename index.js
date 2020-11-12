@@ -49,7 +49,7 @@ app.post("/login", async (req, res) => {
     console.log(user);
     // redirect to dashboard
     res
-      .cookie("username", user.username, { signed: true })
+      .cookie("username", user.username, { signed: true, maxAge: 7200000 })
       .redirect(`/dashboard`);
   } catch (err) {
     console.log(err);
