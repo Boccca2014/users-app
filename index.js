@@ -19,6 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static("assets"));
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+  if (req.cookies.message) {
+    res.clearCookie("message");
+  }
+  next();
+});
+
 app.get("/", (req, res) => {
   // TODO if user is already logged in, redirect to dashboard
   // otherwsie render the login form
@@ -47,7 +54,8 @@ app.post("/login", async (req, res) => {
 
 app.get("/dashboard", (req, res) => {
   const username = req.query.username;
-  res.render("dashboard.njk", { username });
+  const message = req.cookies.message;
+  res.render("dashboard.njk", { username, message });
 });
 
 app.post("/logout", (req, res) => {
@@ -74,7 +82,9 @@ app.post("/register", async (req, res) => {
     res.cookie("message", "You have successfully registered!").redirect("/");
   } catch (err) {
     console.log(err);
-    res.cookie("message", "Invalid username or password!").redirect("/register");
+    res
+      .cookie("message", "Invalid username or password!")
+      .redirect("/register");
   }
 });
 
