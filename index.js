@@ -55,7 +55,11 @@ app.post("/login", async (req, res) => {
 app.get("/dashboard", (req, res) => {
   const username = req.cookies.username;
   const message = req.cookies.message;
-  res.render("dashboard.njk", { username, message });
+  if (username) {
+    res.render("dashboard.njk", { username, message });
+  } else {
+    res.cookie("message", "Please login first!").redirect("/");
+  }
 });
 
 app.post("/logout", (req, res) => {
