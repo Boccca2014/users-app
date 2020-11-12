@@ -44,7 +44,7 @@ app.post("/login", async (req, res) => {
     if (!user) throw Error("No user found with this username!");
     console.log(user);
     // redirect to dashboard
-    res.redirect(`/dashboard?username=${user.username}`);
+    res.cookie("username", user.username).redirect(`/dashboard`);
   } catch (err) {
     console.log(err);
     // redirect to homepage
@@ -53,7 +53,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  const username = req.query.username;
+  const username = req.cookies.username;
   const message = req.cookies.message;
   res.render("dashboard.njk", { username, message });
 });
