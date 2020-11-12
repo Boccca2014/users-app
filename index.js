@@ -1,4 +1,5 @@
 require("dotenv").config();
+const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const users = require("./model/User.js");
 const db = require("./data/db.js");
@@ -44,8 +45,11 @@ app.post("/login", async (req, res) => {
 
   try {
     // check credential
-    const user = await users.findOne({ username, password });
+    const user = await users.findOne({ username });
     if (!user) throw Error("No user found with this username!");
+    const authorized = bcrypt.compare(password, user.password);
+    if (!authorized) throw Error("Invalid password!");
+
     console.log(user);
     // redirect to dashboard
     res
@@ -87,7 +91,8 @@ app.post("/register", async (req, res) => {
   console.log(colors.cyan("Register:", { username, password }));
   try {
     // TODO register the user!
-    const user = await users.create({ username, password });
+    const hash = await bcrypt.hash(password, 10);
+    const user = await users.create({ username, password: hash });
     console.log(user);
     // redirect to the login page
     res.cookie("message", "You have successfully registered!").redirect("/");
