@@ -1,3 +1,4 @@
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const users = require("./model/User.js");
 const db = require("./data/db.js");
@@ -17,7 +18,7 @@ nunjucks.configure("views", {
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("assets"));
-app.use(cookieParser());
+app.use(cookieParser(process.env.ENCRYPT_KEY));
 
 app.use((req, res, next) => {
   if (req.cookies.message) {
@@ -27,7 +28,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  const username = req.cookies.username;
+  const username = req.signedCookies.username;
   const message = req.cookies.message;
   if (username) {
     res.redirect("/dashboard");
@@ -47,7 +48,9 @@ app.post("/login", async (req, res) => {
     if (!user) throw Error("No user found with this username!");
     console.log(user);
     // redirect to dashboard
-    res.cookie("username", user.username).redirect(`/dashboard`);
+    res
+      .cookie("username", user.username, { signed: true })
+      .redirect(`/dashboard`);
   } catch (err) {
     console.log(err);
     // redirect to homepage
@@ -56,7 +59,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  const username = req.cookies.username;
+  const username = req.signedCookies.username;
   const message = req.cookies.message;
   if (username) {
     res.render("dashboard.njk", { username, message });
