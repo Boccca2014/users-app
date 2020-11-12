@@ -27,10 +27,13 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  // TODO if user is already logged in, redirect to dashboard
-  // otherwsie render the login form
+  const username = req.cookies.username;
   const message = req.cookies.message;
-  res.render("index.njk", { message });
+  if (username) {
+    res.redirect("/dashboard");
+  } else {
+    res.render("index.njk", { message });
+  }
 });
 
 app.post("/login", async (req, res) => {
@@ -63,10 +66,11 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  // TODO log user out of the application
-  // redirect to the login page
   console.log(colors.cyan("Log out!"));
-  res.cookie("message", "You have successfully logged out!").redirect("/");
+  res
+    .clearCookie("username")
+    .cookie("message", "You have successfully logged out!")
+    .redirect("/");
 });
 
 app.get("/register", (req, res) => {
